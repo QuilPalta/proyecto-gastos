@@ -90,8 +90,7 @@ def recibir_mensaje():
 
     if texto.strip().lower() == "/excel":
         link = obtener_link_archivo("gastos.xlsx")
-        mensaje = f"🧾 Aquí tienes el Excel con los gastos:
-{link}" if link else "No se encontró el archivo."
+        mensaje = f"🧾 Aquí tienes el Excel con los gastos:{link}" if link else "No se encontró el archivo."
         requests.post(f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage", data={
             "chat_id": chat_id,
             "text": mensaje
@@ -121,10 +120,10 @@ def extraer_datos(html):
     return match.groups() if match else (None, None, None)
 
 def enviar_telegram(monto, comercio, fecha):
-    mensaje = f"💳 Nuevo cargo:
+    mensaje = f"""💳 Nuevo cargo:
 💰 ${monto}
 🏬 {comercio}
-📅 {fecha}"
+📅 {fecha}"""
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
     requests.post(url, data={"chat_id": TELEGRAM_CHAT_ID, "text": mensaje})
 
