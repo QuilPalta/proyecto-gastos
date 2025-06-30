@@ -57,12 +57,20 @@ def subir_a_drive(nombre_archivo, archivo_local):
         mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
     if items:
-        service.files().update(fileId=items[0]['id'], media_body=media).execute()
+        try:
+            service.files().update(fileId=items[0]['id'], media_body=media).execute()
+        except Exception as e:
+            print(f"⚠️ Error actualizando archivo, se intentará crear uno nuevo: {e}")
+            file_metadata = {'name': nombre_archivo}
+            if FOLDER_ID:
+                file_metadata['parents'] = [FOLDER_ID]
+            service.files().create(body=file_metadata, media_body=media, fields='id').execute()
     else:
         file_metadata = {'name': nombre_archivo}
         if FOLDER_ID:
             file_metadata['parents'] = [FOLDER_ID]
         service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+
 
 def obtener_link_archivo(nombre_archivo):
     creds = service_account.Credentials.from_service_account_file(
